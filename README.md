@@ -265,21 +265,21 @@ begitu, jalankan dan copa pada semua client.
 
 zone "airdrop.it10.com" {
 	type master;
-also-notify { 192.238.2.20; }; 
+	also-notify { 192.238.2.20; }; 
     	allow-transfer { 192.238.2.20; };
 	file "/etc/bind/it10/airdrop.it10.com";
 };
 
 zone "redzone.it10.com" {
 	type master;
-also-notify { 192.238.2.20; }; 
+	also-notify { 192.238.2.20; }; 
     	allow-transfer { 192.238.2.20; };
 	file "/etc/bind/it10/redzone.it10.com";
 };
 
 zone "loot.it10.com" {
 	type master;
-also-notify { 192.238.2.20; }; 
+	also-notify { 192.238.2.20; }; 
     	allow-transfer { 192.238.2.20; };
 	file "/etc/bind/it10/loot.it10.com";
 };
@@ -317,10 +317,10 @@ service bind9 restart
 
 Cek berhasil atau gagal
 
-pochinki
+Node Pochinki
 service bind9 stop
 
-Gorgopol
+Node Gorgopol
 Lakukan ping ke gorgopol misal airdrop.it10.com pada client Gorgopol. Jika ping berhasil maka konfigurasi DNS slave telah berhasil
 
 
