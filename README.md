@@ -257,7 +257,72 @@ begitu, jalankan dan copa pada semua client.
 *Akhir-akhir ini seringkali terjadi serangan siber ke DNS Server Utama, sebagai tindakan antisipasi kamu diperintahkan untuk membuat DNS Slave di Georgopol untuk semua domain yang sudah dibuat sebelumnya*
 
 ## Pengerjaan
-1.
+1. edit ``nano /etc/bind/named.conf.local`` pada node Pochinki
+
+   Selanjutnya edit zone ``zone "airdrop.it10.com"``,
+   			 ``zone "redzone.it10.com"``,
+   			 ``zone "loot.it10.com"`` Seperti dibawah
+
+zone "airdrop.it10.com" {
+	type master;
+also-notify { 192.238.2.20; }; 
+    	allow-transfer { 192.238.2.20; };
+	file "/etc/bind/it10/airdrop.it10.com";
+};
+
+zone "redzone.it10.com" {
+	type master;
+also-notify { 192.238.2.20; }; 
+    	allow-transfer { 192.238.2.20; };
+	file "/etc/bind/it10/redzone.it10.com";
+};
+
+zone "loot.it10.com" {
+	type master;
+also-notify { 192.238.2.20; }; 
+    	allow-transfer { 192.238.2.20; };
+	file "/etc/bind/it10/loot.it10.com";
+};
+
+lakukan ``service bind9 restart``
+
+2. Masuk ke web terminal Node Gorgopol tulis apt-get update dan apt install bind9 -y
+
+   Masuk ke ``nano /etc/bind/named.conf.local``
+
+   Masukkan ke conf.local seperti di bawah
+
+zone "airdrop.it10.com" {
+	type slave;
+	masters { 192.238.1.10; }; 
+	file "/var/lib/bind/airdrop.it10.com";
+};
+zone "redzone.it10.com" {
+	type slave;
+	masters { 192.238.1.10; }; 
+	file "/var/lib/bind/redzone.it10.com";
+};
+zone "loot.it10.com" {
+	type slave;
+	masters { 192.238.1.10; }; 
+	file "/var/lib/bind/loot.it10.com";
+};
+
+tambahkan ``node nameserver 192.168.122.1
+nameserver 192.238.1.10 # IP Pochinki``
+ke ``/etc/resolv.conf``
+
+lalu lakukan
+service bind9 restart
+
+Cek berhasil atau gagal
+
+pochinki
+service bind9 stop
+
+Gorgopol
+Lakukan ping ke gorgopol misal airdrop.it10.com pada client Gorgopol. Jika ping berhasil maka konfigurasi DNS slave telah berhasil
+
 
 # 8. 
 *Kamu juga diperintahkan untuk membuat subdomain khusus melacak airdrop berisi peralatan medis dengan subdomain medkit.airdrop.xxxx.com yang mengarah ke Lipovka*
