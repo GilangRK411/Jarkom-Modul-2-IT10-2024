@@ -16,31 +16,236 @@ Soal Jarkom Modul 2 2024
 - *Markas pusat juga meminta dibuatkan tiga Web Server yaitu Severny, Stalber, dan Lipovka. Sedangkan Mylta akan bertindak sebagai Load Balancer untuk server-server tersebut*
 
 ## Pengerjaan
-1.
+1. Pertama membuat topologi seperti gambar berikut, dengan total *cloud NAT 1*, *Ethernet switch 2*, dan *ubuntu dengan image docker kuuhaku86/gns3-ubuntu:1.0.1 sebanyak 10*
+![TOPOLOGI](output/image.png)
+
+2. Start terlebih dahulu untuk semua node. Lalu, akses web console pada *Erengel* dan pada ``nano/etc/network/interfaces``
+
+Isikan dengan 
+auto eth0
+iface eth0 inet dhcp
+
+auto eth1
+iface eth1 inet static
+  address 192.238.1.1
+  netmask 255.255.255.0
+
+auto eth2
+iface eth2 inet static
+  address 192.238.2.1
+  netmask 255.255.255.0
+
+auto eth3
+iface eth3 inet static
+  address 192.238.3.1
+  netmask 255.255.255.0
+
+auto eth4
+iface eth4 inet static
+  address 192.238.4.1
+  netmask 255.255.255.0
+
+Save dan exit
+
+3. Lanjut ubah isi dari ``nano /etc/network/interfaces`` pada semua node dengan ketentuan berikut.
+
+*Pochinki*
+``auto eth0
+iface eth0 inet static
+    address 192.238.1.10
+    netmask 255.255.255.0
+    	gateway 192.238.1.1``
+
+*Gorgopol*
+auto eth0
+iface eth0 inet static
+    address 192.238.2.20
+    netmask 255.255.255.0
+    	gateway 192.238.2.1
+
+*Severny*
+auto eth0
+iface eth0 inet static
+    address 192.238.3.10
+    netmask 255.255.255.0
+    	gateway 192.238.3.1
+
+*Stalber*
+auto eth0
+iface eth0 inet static
+    address 192.238.3.30
+    netmask 255.255.255.0
+    	gateway 192.238.3.1
+
+4. Selanjutnya, pada node *erengel* jalankan
+``apt-get update`` dan ``apt install bind9``
+jangan lupa untuk menjalankan 
+``iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 192.238.0.0/16``
+
+tes jaringan dengan ``ping google.com``
 
 # 2.
 *Karena para pasukan membutuhkan koordinasi untuk mengambil airdrop, maka buatlah sebuah domain yang mengarah ke Stalber dengan alamat airdrop.xxxx.com dengan alias www.airdrop.xxxx.com dimana xxxx merupakan kode kelompok. Contoh : airdrop.it01.com*
 
+
 ## Pengerjaan
-1.
+1. Pada node *Pochinki* jalankan
+``echo nameserver 192.168.122.1 > /etc/resolv.conf`` selanjutnya, ``apt-get update`` dan ``apt install bind9 -y``
+
+jika sudah berhasil, lanjut edit pada ``nano /etc/bind/named.conf.local``
+
+isi kan dengan ini:
+zone "airdrop.it10.com" {
+	type master;
+	file "/etc/bind/it10/airdrop.it10.com";
+};
+
 
 # 3 
 *Para pasukan juga perlu mengetahui mana titik yang sedang di bombardir artileri, sehingga dibutuhkan domain lain yaitu redzone.xxxx.com dengan alias www.redzone.xxxx.com yang mengarah ke Severny*
 
 ## Pengerjaan
-1.
+1. masih di node *pochinki* tambahkan pada ``nano /etc/bind/named.conf.local``
+
+tambahkan dengan ini:
+zone "redzone.it10.com" {
+	type master;
+	file "/etc/bind/it10/redzone.it10.com";
+};
+
+
+
 
 # 4. 
 *Markas pusat meminta dibuatnya domain khusus untuk menaruh informasi persenjataan dan suplai yang tersebar. Informasi persenjataan dan suplai tersebut mengarah ke Mylta dan domain yang ingin digunakan adalah loot.xxxx.com dengan alias www.loot.xxxx.com*
 
 ## Pengerjaan
-1.
+1. masih di node *pochinki* tambahkan pada ``nano /etc/bind/named.conf.local``
+
+tambahkan dengan ini:
+zone "loot.it10.com" {
+	type master;
+	file "/etc/bind/it10/loot.it10.com";
+};
 
 # 5. 
 *Pastikan domain-domain tersebut dapat diakses oleh seluruh komputer (client) yang berada di Erangel*
 
 ## Pengerjaan
-1.
+1. selanjutnya masih pada node *pochinki*. Buat direktori berikut ini ``mkdir /etc/bind/it10``
+
+selanjutnya,
+``cp /etc/bind/db.local /etc/bind/it10/airdrop.it10.com``
+``cp /etc/bind/db.local /etc/bind/it10/redzone.it10.com``
+``cp /etc/bind/db.local /etc/bind/it10/loot.it10.com``
+
+jika sudah, 
+- akses dan edit ``nano /etc/bind/it10/airdrop.it10.com`` menjadi seperti ini:
+
+;
+; BIND data file for local loopback interface
+;
+$TTL 604800
+@   IN  SOA  airdrop.it10.com. root.airdrop.it10.com. (
+                    	2022100601 	; Serial
+                    	604800      	; Refresh
+                    	86400       	; Retry
+                    	2419200     	; Expire
+                    	604800 )    	; Negative Cache TTL
+;
+@   	IN  NS  	airdrop.it10.com.
+@   	IN  A   	192.238.3.30 ; IP Stalber
+www 	IN  CNAME   airdrop.it10.com
+@   	IN  AAAA	::1
+
+- lanjut, akses dan edit ``nano /etc/bind/it10/redzone.it10.com``
+
+menjadi seperti ini:
+;
+; BIND data file for local loopback interface
+;
+$TTL 604800
+@   IN  SOA  redzone.it10.com. root.redzone.it10.com. (
+                    	2022100601 	; Serial
+                    	604800      	; Refresh
+                    	86400       	; Retry
+                    	2419200     	; Expire
+                    	604800 )    	; Negative Cache TTL
+;
+@   	IN  NS  	redzone.it10.com.
+@   	IN  A   	192.238.3.10 ; IP Severny
+www 	IN  CNAME   redzone.it10.com.
+@   	IN  AAAA	::1
+
+- akses dan edit ``nano /etc/bind/it10/loot.it10.com`` menjadi seperti ini:
+
+;
+; BIND data file for local loopback interface
+;
+$TTL 604800
+@   IN  SOA  loot.it10.com. root.loot.it10.com. (
+                    	2022100601  ; Serial
+                    	604800  	; Refresh
+                    	86400   	; Retry
+                    	2419200 	; Expire
+                    	604800) 	; Negative Cache TTL
+;
+@   	IN  NS  loot.it10.com.
+@   	IN  A   192.238.3.40 ; IP Mylta
+www 	IN  CNAME   loot.it10.com.
+@   	IN  AAAA	::1
+
+jalankan: ``service bind9 restart``
+
+2. untuk mengecek domain-domain pada nomor 2,3, dan 4 dapat diakses oleh semua client pada Erangel, maka:
+
+pada node *pochinki* coba:
+``ping airdop.it10.com -c 5``
+
+selanjutnya, coba pada node *serverny*
+jalankan berikut ini terlebih dahulu,
+``echo nameserver 192.168.122.1 > /etc/resolv.conf``
+
+``apt-get update``
+``apt install bind9 -y``
+
+``ping www.redzone.it10.com -c 5``
+
+![alt text](output/pingredzon.png)
+
+selanjutnya, coba pada node *georgopol*
+jalankan berikut ini terlebih dahulu,
+``echo nameserver 192.168.122.1 > /etc/resolv.conf``
+
+``apt-get update``
+``apt install bind9 -y``
+
+``ping www.redzone.it10.com -c 5``
+![alt text](output/pingdigeorgopol\.png)
+
+
+selanjutnya, coba pada node *mylta*
+jalankan berikut ini terlebih dahulu,
+``echo nameserver 192.168.122.1 > /etc/resolv.conf``
+
+``apt-get update``
+``apt install bind9 -y``
+
+``ping www.loot.it10.com -c 5``
+![alt text](output/pingdimylta.png)
+
+selanjutnya, coba pada node *Stalber*
+jalankan berikut ini terlebih dahulu,
+``echo nameserver 192.168.122.1 > /etc/resolv.conf``
+
+``apt-get update``
+``apt install bind9 -y``
+
+``ping www.airdrop.it10.com -c 5``
+![alt text](output/pingdistalber.png)
+
+begitu, jalankan dan copa pada semua client.
+
 
 # 6. 
 *Beberapa daerah memiliki keterbatasan yang menyebabkan hanya dapat mengakses domain secara langsung melalui alamat IP domain tersebut. Karena daerah tersebut tidak diketahui secara spesifik, pastikan semua komputer (client) dapat mengakses domain redzone.xxxx.com melalui alamat IP Severny (Notes : menggunakan pointer record)*
