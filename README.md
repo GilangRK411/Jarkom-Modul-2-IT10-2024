@@ -221,7 +221,7 @@ jalankan berikut ini terlebih dahulu,
 ``apt install bind9 -y``
 
 ``ping www.redzone.it10.com -c 5``
-![alt text](output/pingdigeorgopol\.png)
+![alt text](output/pinggeorgopol.png)
 
 
 selanjutnya, coba pada node *mylta*
