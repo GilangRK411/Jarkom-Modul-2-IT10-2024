@@ -571,7 +571,7 @@ www.log IN  A   	192.238.3.10 ; IP Severny
 ``nameserver 192.238.1.10`` IP pochinki untuk semua node kecuali *erengel* dan *pochinki*
 
 
-#PROBLEM
+# PROBLEM
 
 Untuk nomer 12 Masih ada kendala 
 
