@@ -290,7 +290,8 @@ lakukan ``service bind9 restart``
 
    Masuk ke ``nano /etc/bind/named.conf.local``
 
-   Masukkan ke conf.local seperti di bawah
+
+Masukkan ke conf.local seperti di bawah
 
 zone "airdrop.it10.com" {
 	type slave;
