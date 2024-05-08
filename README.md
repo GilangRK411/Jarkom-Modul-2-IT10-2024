@@ -570,6 +570,9 @@ www.log IN  A   	192.238.3.10 ; IP Severny
 1. ``nano /etc/resolv.conf``  ganti ``192.168.122.1`` ke
 ``nameserver 192.238.1.10`` IP pochinki untuk semua node kecuali *erengel* dan *pochinki*
 
+#PROBLEM
+Untuk nomer 12 Masih ada kendala 
+
 # 12. 
 *Karena pusat ingin sebuah website yang ingin digunakan untuk memantau kondisi markas lainnya maka deploy lah webiste ini (cek resource yg lb) pada severny menggunakan apache*
 
